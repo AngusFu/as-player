@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SRS</title>   
+    <meta charset="utf-8">
+    <style>
+        body{
+            padding-top: 55px;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        object {
+            display: block;
+            margin: 0 auto;
+        }
+        input {
+            display: block;
+            width: 300px;
+            padding: 10px;
+            margin: 100px auto;
+            line-height: 2;
+        }
+    </style>
+    <script src="https://s4.ssl.qhres.com/static/9cb818b37edae8f6.js"></script>
+</head>
+<body>
+    <div id="player_id"></div>
+    <input type="text" id="url" placeholder="请输入视频地址">
+</body>
+<script type="text/javascript">
+_loader.add('swfobject', './srs_assets/swfobject.js');
+_loader.add('srsplayer', './srs_assets/srs.player.js');
+
+_loader.use('swfobject, srsplayer', function () {
+    // ID 宽 高
+    var player = new SrsPlayer('player_id', 462, 260);
+    // 播放器地址
+    player.set_srs_player_url('./srs_assets/SrsPlayer.swf');
+
+    SrsPlayer.log = function(args) {
+        window.console && console.log(args)
+    };
+
+    // ready 后才能播放
+    player.on_player_ready = function() {
+        player.set_bt(0.8);
+        player.set_mbt(2.4);
+        player.play('rtmp://live.hkstv.hk.lxdns.com/live/hks');
+        // player.play('https://v.tf.360.cn/v/swf/preview/file/23e75c2631d42a29661748d44feaa89b.flv');
+        // player.play('https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/cae-legoup-video-target/a63df6d8-0bd0-4493-99aa-a0e221f5307d.mp4');
+    };
+
+    player.on_player_status = function(code, desc) {
+        // console.log("[播放器状态] code=" + code + ", desc=" + desc);
+    };
+
+    player.on_player_metadata = function(metadata) {
+        // 必须的 不能删除 否则全屏状态有问题
+        player.set_fs('screen', 100);
+    };
+
+    player.on_player_timer = function(time, buffer_length, kbps, fps, rtime) {
+        // 可以把时间的判断放在这里
+        // if (new Date() > new Date('2017/06/10 00:00:00')) {
+        //     location.href = '/';
+        // } else {
+        //     console.log(2222);
+        // }
+    };
+
+    // 开始播放
+    player.start();
+
+    document.getElementById('url').onchange = function () {
+        var val = this.value.trim();
+        if (val && /^(https?|rtmp)/.test(val)) {
+            player.play(val);
+        }
+    };
+});
+</script>
+</html>
